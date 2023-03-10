@@ -25,7 +25,7 @@ const GamesList: React.FC = () => {
         if (selectedDay !== null) {
           formattedDate = `${formattedDate.slice(0, -2)}${selectedDay}`;
           console.log(formattedDate)
-          const response = await fetch(`https://api.rawg.io/api/games?key=730fd79adb5a423fb494edd29280c593&dates=${formattedDate},${formattedDate}`);
+          const response = await fetch(`https://api.rawg.io/api/games?key=&dates=${formattedDate},${formattedDate}`);
           const data = await response.json();
           setGames(data.results);
         } else if (selectedMonth !== null) {
