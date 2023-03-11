@@ -1,62 +1,47 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState } from 'react';
 import { DateContext } from '../contexts/DateContext';
-
-interface Game {
-  id: number;
-  name: string;
-  released: string;
-  rating: number;
-}
+import Game from '../interfaces/GameI';
+import useFetchGames from '../hooks/useFetchGames';
 
 const GamesList: React.FC = () => {
   const { selectDate } = useContext(DateContext);
 
+
   const [games, setGames] = useState<Game[]>([]);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [dateFilter, setDateFilter] = useState<'day' | 'month'>('month');
+
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    setIsLoading(true);
-    const fetchGames = async () => {
-      try {
-        let formattedDate = selectDate.toISOString().split('T')[0];
-        let ratingFilter = '';
-        if (selectedDay !== null) {
-          formattedDate = `${formattedDate.slice(0, -2)}${selectedDay}`;
-          console.log(formattedDate)
-          const response = await fetch(`https://api.rawg.io/api/games?key=&dates=${formattedDate},${formattedDate}`);
-          const data = await response.json();
-          setGames(data.results);
-        } else if (selectedMonth !== null) {
-          formattedDate = `${formattedDate.slice(0, -5)}${selectedMonth}-01`;
-          const lastDayOfMonth = new Date(selectDate.getFullYear(), selectedMonth, 0).getDate();
-          formattedDate += `,${formattedDate.slice(0, -2)}${lastDayOfMonth}`;
-          ratingFilter = '&metacritic=1,100';
-        }
-        // const response = await fetch(`https://api.rawg.io/api/games?key=730fd79adb5a423fb494edd29280c593&dates=${formattedDate}${ratingFilter}`);
-        // const data = await response.json();
-        // console.log(data.results);
-        // setGames(data.results);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const getByDay = () => {
+    return `${selectDate.toISOString().split('T')[0]},${selectDate.toISOString().split('T')[0]}`;
+  }
 
-    fetchGames();
-  }, [selectDate, selectedDay, selectedMonth]);
+  const getByMonth = () => {
+    const year = selectDate.getFullYear();
+    const month = selectDate.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const firstDayOfNextMonth = new Date(year, month + 1, 1);
+    const lastDayOfMonth = new Date(firstDayOfNextMonth.getTime() - (24 * 60 * 60 * 1000));
+    const formattedFirstDay = firstDayOfMonth.toISOString().split('T')[0];
+    const formattedLastDay = lastDayOfMonth.toISOString().split('T')[0];
+    console.log(`${formattedFirstDay},${formattedLastDay}`)
+    return `${formattedFirstDay},${formattedLastDay}`
+  }
 
+  useFetchGames(
+    (dateFilter === 'day'
+      ? getByDay()
+      : getByMonth()),
+    setGames,
+    setIsLoading,
+  );
 
-  const handleSelectDay = (day: number) => {
-    setSelectedDay(day);
-    setSelectedMonth(null);
+  const handleSelectDay = () => {
+    setDateFilter('day');
   };
 
-  const handleSelectMonth = (month: number) => {
-    setSelectedDay(null);
-    setSelectedMonth(month);
+  const handleSelectMonth = () => {
+    setDateFilter('month');
   };
 
   return (
@@ -66,8 +51,8 @@ const GamesList: React.FC = () => {
       </h1>
       <h2>Top rated games:</h2>
       <div>
-        <button onClick={() => handleSelectDay(selectDate.getDate())}>Select day</button>
-        <button onClick={() => handleSelectMonth(selectDate.getMonth() + 1)}>Select month</button>
+        <button onClick={handleSelectDay}>Select day</button>
+        <button onClick={handleSelectMonth}>Select month</button>
       </div>
       {isLoading ? (
         <p>Loading...</p>
