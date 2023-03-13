@@ -4,8 +4,10 @@ import { GamesDataContext } from '../contexts/GameDataContext';
 import { DateContext } from '../contexts/DateContext';
 import '../styles/Chart.css'
 
-const GamesGraphs: React.FC = () => {
-  const { gamesByPlatform, meanScoreByPlatform } = useContext(GamesDataContext);
+const GamesGraphs: React.FC<{
+  dateFilter: 'day' | 'month',
+  setDateFilter: (dateFilter: 'day' | 'month') => void
+}> = ({ dateFilter, setDateFilter }) => {  const { gamesByPlatform, meanScoreByPlatform } = useContext(GamesDataContext);
   const { selectDate, setSelectDate } = useContext(DateContext);
   const [selectedObj, setSelectedObj] = useState<'ITEM1' | 'ITEM2'>('ITEM1');
 
@@ -73,7 +75,15 @@ const GamesGraphs: React.FC = () => {
   useEffect(() => {
     d3.select('#chart svg').remove(); // remove o gráfico anterior antes de renderizar o novo
     renderBarChart();
-  }, [selectedObj, selectDate, setSelectDate, gamesByPlatform, meanScoreByPlatform]);
+  }, [
+    selectedObj,
+    selectDate,
+    setSelectDate,
+    gamesByPlatform,
+    meanScoreByPlatform,
+    dateFilter,
+    setDateFilter
+  ]);
 
   return (
     <>

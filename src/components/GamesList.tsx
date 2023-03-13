@@ -3,12 +3,14 @@ import { DateContext } from '../contexts/DateContext';
 import Game from '../interfaces/GameI';
 import useFetchGames from '../hooks/useFetchGames';
 
-const GamesList: React.FC = () => {
-  const { selectDate } = useContext(DateContext);
+const GamesList: React.FC<{
+  dateFilter: 'day' | 'month',
+  setDateFilter: (dateFilter: 'day' | 'month') => void
+}> = ({ dateFilter, setDateFilter }) => {  const { selectDate } = useContext(DateContext);
 
 
   const [games, setGames] = useState<Game[]>([]);
-  const [dateFilter, setDateFilter] = useState<'day' | 'month'>('month');
+  // const [dateFilter, setDateFilter] = useState<'day' | 'month'>('month');
 
   const [isLoading, setIsLoading] = useState(false);
 
