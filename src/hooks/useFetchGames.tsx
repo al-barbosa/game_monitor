@@ -3,6 +3,7 @@ import { GamesDataContext } from '../contexts/GameDataContext';
 import Game from "../interfaces/GameI";
 import getMeanScoreByPlatform from "./MeanScore";
 
+
 const useFetchGames = (
     formattedDateRange: string,
     setGames: React.Dispatch<React.SetStateAction<Game[]>>,
@@ -12,6 +13,7 @@ const useFetchGames = (
   
   useEffect(() => {
     setIsLoading(true)
+    // const INSERIR_KEY = process.env.KEY;
     const fetchGames = async () => {
       try {
         const pageSize = 20;
@@ -21,7 +23,7 @@ const useFetchGames = (
 
         while (page <= totalPages) {
           const response = await fetch(
-            `https://api.rawg.io/api/games?key=&dates=${formattedDateRange}&page=${page}&page_size=${pageSize}&metacritic=01,100`
+            `https://api.rawg.io/api/games?key=730fd79adb5a423fb494edd29280c593&dates=${formattedDateRange}&page=${page}&page_size=${pageSize}&metacritic=01,100`
           );
 
           const data = await response.json();
