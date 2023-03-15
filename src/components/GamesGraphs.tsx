@@ -74,6 +74,23 @@ const GamesGraphs: React.FC<{
       .append('rect')
       .attr('class', 'bar')
       .merge(bars)
+      .on('mouseover', function (event, d: any) {
+        const xValue = d[0];
+        const yValue = d[1];
+        const tooltip = d3.select('#chart-tooltip');
+        tooltip.html(`<p>X: ${xValue}</p><p>Y: ${yValue}</p>`);
+        tooltip.style('visibility', 'visible');
+      })
+      .on('mousemove', function (event: MouseEvent) {
+        const tooltip = d3.select('#chart-tooltip');
+        const xPosition = event.clientX + 10;
+        const yPosition = event.clientY + 10;
+        tooltip.style('left', `${xPosition}px`).style('top', `${yPosition}px`);
+      })
+      .on('mouseout', function () {
+        const tooltip = d3.select('#chart-tooltip');
+        tooltip.style('visibility', 'hidden');
+      })
       .transition()
       .duration(500)
       .attr('x', d => xScale(d[0])!)
@@ -129,7 +146,7 @@ const GamesGraphs: React.FC<{
         <button onClick={() => setSelectedObj('ITEM2')}>ITEM 2</button>
       </div>
       <div id="chart"></div>
-      <div id="chart-tooltip"></div>
+      <div id="chart-tooltip" className="tooltip"></div>
     </>
   );
 };

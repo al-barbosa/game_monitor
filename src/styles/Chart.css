@@ -1,9 +1,7 @@
-#chart {
-  width: 100%;
-  height: 100%;
-}
-
-svg {
-  width: 100%;
-  height: 100%;
+#chart-tooltip {
+  position: absolute;
+  visibility: hidden;
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
 }
